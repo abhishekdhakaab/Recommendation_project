@@ -1,4 +1,4 @@
-"""Download Amazon Beauty dataset files for SeqRec."""
+"""Download Amazon Beauty dataset from HuggingFace (McAuley-Lab/Amazon-Reviews-2023)."""
 
 from __future__ import annotations
 
@@ -6,104 +6,63 @@ import argparse
 import sys
 from pathlib import Path
 
-import requests
-from tqdm import tqdm
-
-
-BEAUTY_REVIEWS_URL = (
-    "https://datarepo.eng.ucsd.edu/mcauley_group/data/amazon_v2/categoryFilesSmall/All_Beauty.csv"
-)
-BEAUTY_META_URL = (
-    "https://datarepo.eng.ucsd.edu/mcauley_group/data/amazon_v2/metaFiles2/meta_All_Beauty.json.gz"
-)
-
-FILES = [
-    (BEAUTY_REVIEWS_URL, "All_Beauty.csv"),
-    (BEAUTY_META_URL, "meta_All_Beauty.json.gz"),
-]
-
-
-def download_file(
-    url: str,
-    destination: Path,
-    *,
-    overwrite: bool = False,
-    chunk_size: int = 1024 * 1024,
-) -> Path:
-    """Download a single file with progress bar. Returns destination path."""
-
-    if destination.exists() and not overwrite:
-        print(f"[skip] {destination.name} already exists at {destination}")
-        return destination
-
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = destination.with_suffix(destination.suffix + ".tmp")
-
-    try:
-        response = requests.get(url, stream=True, timeout=120)
-        response.raise_for_status()
-
-        total = int(response.headers.get("content-length", 0)) or None
-        with (
-            tmp_path.open("wb") as fout,
-            tqdm(
-                total=total,
-                unit="B",
-                unit_scale=True,
-                unit_divisor=1024,
-                desc=destination.name,
-                file=sys.stdout,
-            ) as pbar,
-        ):
-            for chunk in response.iter_content(chunk_size=chunk_size):
-                if chunk:
-                    fout.write(chunk)
-                    pbar.update(len(chunk))
-
-        tmp_path.rename(destination)
-        print(f"[ok] Saved {destination.name} → {destination}")
-        return destination
-
-    except requests.HTTPError as exc:
-        if tmp_path.exists():
-            tmp_path.unlink()
-        print(f"[error] HTTP {exc.response.status_code} when downloading {url}", file=sys.stderr)
-        raise SystemExit(1) from exc
-    except Exception as exc:
-        if tmp_path.exists():
-            tmp_path.unlink()
-        print(f"[error] Failed to download {url}: {exc}", file=sys.stderr)
-        raise SystemExit(1) from exc
-
 
 def download_beauty_dataset(output_dir: str | Path, *, overwrite: bool = False) -> dict[str, Path]:
-    """Download both Beauty files to output_dir."""
+    """Download Amazon All_Beauty reviews and metadata via HuggingFace datasets library."""
 
-    output_path = Path(output_dir)
-    output_path.mkdir(parents=True, exist_ok=True)
+    try:
+        from datasets import load_dataset
+    except ImportError:
+        print("[error] 'datasets' library not found. Install with: pip install datasets", file=sys.stderr)
+        raise SystemExit(1)
+
+    out = Path(output_dir)
+    out.mkdir(parents=True, exist_ok=True)
+
+    reviews_path = out / "All_Beauty_reviews.parquet"
+    meta_path = out / "All_Beauty_meta.parquet"
     results: dict[str, Path] = {}
-    for url, filename in FILES:
-        dest = output_path / filename
-        results[filename] = download_file(url, dest, overwrite=overwrite)
+
+    if reviews_path.exists() and not overwrite:
+        print(f"[skip] {reviews_path.name} already exists")
+    else:
+        print("Downloading Amazon Beauty reviews from HuggingFace (McAuley-Lab/Amazon-Reviews-2023)...")
+        reviews = load_dataset(
+            "McAuley-Lab/Amazon-Reviews-2023",
+            "raw_review_All_Beauty",
+            split="full",
+            trust_remote_code=True,
+        )
+        print(f"  {len(reviews):,} reviews loaded")
+        reviews.to_parquet(str(reviews_path))
+        print(f"[ok] Saved → {reviews_path}")
+    results["reviews"] = reviews_path
+
+    if meta_path.exists() and not overwrite:
+        print(f"[skip] {meta_path.name} already exists")
+    else:
+        print("Downloading Amazon Beauty metadata from HuggingFace...")
+        meta = load_dataset(
+            "McAuley-Lab/Amazon-Reviews-2023",
+            "raw_meta_All_Beauty",
+            split="full",
+            trust_remote_code=True,
+        )
+        print(f"  {len(meta):,} items loaded")
+        meta.to_parquet(str(meta_path))
+        print(f"[ok] Saved → {meta_path}")
+    results["meta"] = meta_path
+
     return results
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Download Amazon All_Beauty dataset files.",
-    )
-    parser.add_argument(
-        "--output-dir",
-        required=True,
-        help="Directory where downloaded files will be saved (e.g. data/raw/beauty)",
-    )
-    parser.add_argument(
-        "--overwrite",
-        action="store_true",
-        help="Re-download even if files already exist",
-    )
+    parser = argparse.ArgumentParser(description="Download Amazon All_Beauty dataset via HuggingFace.")
+    parser.add_argument("--output-dir", required=True,
+                        help="Directory where files will be saved (e.g. data/raw/beauty)")
+    parser.add_argument("--overwrite", action="store_true",
+                        help="Re-download even if files already exist")
     args = parser.parse_args()
-
     paths = download_beauty_dataset(args.output_dir, overwrite=args.overwrite)
     for name, path in paths.items():
         print(f"  {name}: {path}")

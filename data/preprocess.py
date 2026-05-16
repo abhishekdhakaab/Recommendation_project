@@ -384,41 +384,62 @@ def preprocess_beauty_input_dir(input_dir: str | Path, output_dir: str | Path) -
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
-    # --- Load reviews CSV ---
-    reviews_file = input_path / "All_Beauty.csv"
-    logger.info("Loading reviews from %s", reviews_file)
-    df_reviews = pd.read_csv(
-        reviews_file,
-        names=["rating", "title", "text", "images", "asin", "parent_asin", "user_id", "timestamp", "verified_purchase"],
-        dtype=str,
-    )
-    # Drop header row if present
-    if df_reviews.iloc[0]["rating"] == "rating":
-        df_reviews = df_reviews.iloc[1:].reset_index(drop=True)
+    # --- Load reviews (HuggingFace parquet or legacy CSV) ---
+    reviews_parquet = input_path / "All_Beauty_reviews.parquet"
+    reviews_csv = input_path / "All_Beauty.csv"
 
-    df_reviews = df_reviews.dropna(subset=["parent_asin", "user_id", "timestamp"])
-    df_reviews["timestamp"] = pd.to_numeric(df_reviews["timestamp"], errors="coerce")
-    df_reviews = df_reviews.dropna(subset=["timestamp"])
-    df_reviews["timestamp"] = df_reviews["timestamp"].astype(int)
-    df_reviews["rating"] = pd.to_numeric(df_reviews["rating"], errors="coerce").fillna(0.0).astype(float)
-    df_reviews["item_id"] = df_reviews["parent_asin"].astype(str)
+    if reviews_parquet.exists():
+        logger.info("Loading reviews from %s", reviews_parquet)
+        df_reviews = pd.read_parquet(reviews_parquet)
+        df_reviews["item_id"] = df_reviews["parent_asin"].astype(str)
+        df_reviews["user_id"] = df_reviews["user_id"].astype(str)
+        df_reviews["timestamp"] = pd.to_numeric(df_reviews["timestamp"], errors="coerce")
+        df_reviews = df_reviews.dropna(subset=["item_id", "user_id", "timestamp"])
+        df_reviews["timestamp"] = df_reviews["timestamp"].astype(int)
+        df_reviews["rating"] = pd.to_numeric(df_reviews.get("rating", 0), errors="coerce").fillna(0.0)
+    elif reviews_csv.exists():
+        logger.info("Loading reviews from %s", reviews_csv)
+        df_reviews = pd.read_csv(reviews_csv, dtype=str)
+        if "parent_asin" not in df_reviews.columns and df_reviews.columns[0] == "rating":
+            df_reviews.columns = ["rating", "title", "text", "images", "asin", "parent_asin",
+                                   "user_id", "timestamp", "verified_purchase"]
+        df_reviews["item_id"] = df_reviews["parent_asin"].astype(str)
+        df_reviews["timestamp"] = pd.to_numeric(df_reviews["timestamp"], errors="coerce")
+        df_reviews = df_reviews.dropna(subset=["item_id", "user_id", "timestamp"])
+        df_reviews["timestamp"] = df_reviews["timestamp"].astype(int)
+        df_reviews["rating"] = pd.to_numeric(df_reviews["rating"], errors="coerce").fillna(0.0)
+    else:
+        raise FileNotFoundError(
+            f"No review file found in {input_path}. "
+            "Expected All_Beauty_reviews.parquet (from HuggingFace) or All_Beauty.csv."
+        )
     logger.info("Loaded %d raw review rows", len(df_reviews))
 
-    # --- Load item metadata (JSONL.GZ) ---
-    meta_file = input_path / "meta_All_Beauty.json.gz"
-    logger.info("Loading item metadata from %s", meta_file)
-    meta_records: list[dict] = []
-    with gzip.open(meta_file, "rt", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                record = json.loads(line)
-                meta_records.append(record)
-            except json.JSONDecodeError:
-                continue
-    df_meta = pd.DataFrame(meta_records)
+    # --- Load item metadata (HuggingFace parquet or legacy JSONL.GZ) ---
+    meta_parquet = input_path / "All_Beauty_meta.parquet"
+    meta_gz = input_path / "meta_All_Beauty.json.gz"
+
+    if meta_parquet.exists():
+        logger.info("Loading item metadata from %s", meta_parquet)
+        df_meta = pd.read_parquet(meta_parquet)
+    elif meta_gz.exists():
+        logger.info("Loading item metadata from %s", meta_gz)
+        meta_records: list[dict] = []
+        with gzip.open(meta_gz, "rt", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    meta_records.append(json.loads(line))
+                except json.JSONDecodeError:
+                    continue
+        df_meta = pd.DataFrame(meta_records)
+    else:
+        raise FileNotFoundError(
+            f"No metadata file found in {input_path}. "
+            "Expected All_Beauty_meta.parquet (from HuggingFace) or meta_All_Beauty.json.gz."
+        )
     logger.info("Loaded %d raw item meta rows", len(df_meta))
 
     # --- Build interaction records for k-core filtering ---
