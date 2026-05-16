@@ -1,0 +1,43 @@
+{
+  "1m_unique_batches": {
+    "batch_size": 2048,
+    "device": "cpu",
+    "epochs": 3,
+    "first_loss": 4.856886892995239,
+    "index_built": false,
+    "last_loss": 4.772714681858023,
+    "output_dir": "models/artifacts/sports_and_outdoors_tower_1m_unique",
+    "recall_k": 50,
+    "train_interactions": 1000000,
+    "unique_items_per_batch": true,
+    "validation_recall_at_k": 0.00315,
+    "validation_users": 20000
+  },
+  "500k_duplicate_batches": {
+    "batch_size": 2048,
+    "device": "cpu",
+    "epochs": 3,
+    "first_loss": 7.626732255974594,
+    "index_built": false,
+    "last_loss": 7.5600159236363,
+    "output_dir": "models/artifacts/sports_and_outdoors_tower_500k",
+    "recall_k": 50,
+    "train_interactions": 500000,
+    "validation_recall_at_k": 0.0029,
+    "validation_users": 10000
+  },
+  "500k_unique_batches": {
+    "batch_size": 2048,
+    "device": "cpu",
+    "epochs": 3,
+    "first_loss": 4.851287272021234,
+    "index_built": false,
+    "last_loss": 4.766732904060924,
+    "output_dir": "models/artifacts/sports_and_outdoors_tower_500k_unique",
+    "recall_k": 50,
+    "train_interactions": 500000,
+    "unique_items_per_batch": true,
+    "validation_recall_at_k": 0.0039,
+    "validation_users": 10000
+  }
+}

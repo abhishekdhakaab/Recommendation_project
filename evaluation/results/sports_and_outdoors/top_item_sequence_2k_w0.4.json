@@ -1,0 +1,27 @@
+{
+  "at_10": {
+    "hit": 0.1825,
+    "mrr": 0.057077182539682525,
+    "ndcg": 0.08585655607683548,
+    "recall": 0.1825,
+    "users": 2000
+  },
+  "at_20": {
+    "hit": 0.334,
+    "mrr": 0.06710941163454708,
+    "ndcg": 0.12355473610994239,
+    "recall": 0.334,
+    "users": 2000
+  },
+  "at_50": {
+    "hit": 0.6915,
+    "mrr": 0.0781988807798532,
+    "ndcg": 0.1939583435798529,
+    "recall": 0.6915,
+    "users": 2000
+  },
+  "embedding_dim": 64,
+  "popularity_weight": 0.4,
+  "protocol": "top 2000 items, 2000 users, 100 popularity-sampled negatives",
+  "window_size": 20
+}

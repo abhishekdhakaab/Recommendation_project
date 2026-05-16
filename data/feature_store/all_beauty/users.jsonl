@@ -1,0 +1,3 @@
+{"cold_start_flag": false, "interaction_count": 6, "interaction_history": [0, 0, 0, 0, 0, 0], "last_seen_ts": 1398356729000, "top_categories": ["All Beauty"], "user_embedding": null, "user_id": "0"}
+{"cold_start_flag": false, "interaction_count": 5, "interaction_history": [0, 0, 0, 0, 0], "last_seen_ts": 1301701566000, "top_categories": ["All Beauty"], "user_embedding": null, "user_id": "1"}
+{"cold_start_flag": false, "interaction_count": 10, "interaction_history": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], "last_seen_ts": 1643563631330, "top_categories": ["All Beauty"], "user_embedding": null, "user_id": "2"}

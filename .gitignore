@@ -1,0 +1,35 @@
+# Data — raw and processed (too large for git)
+data/raw/
+data/processed/
+
+# Model artifacts — checkpoints, embeddings, indexes
+models/artifacts/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environments
+.env
+.venv/
+venv/
+
+# MLflow
+mlflow/
+
+# Jupyter
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+/tmp/

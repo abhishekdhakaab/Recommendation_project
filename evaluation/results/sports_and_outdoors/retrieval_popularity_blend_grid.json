@@ -1,0 +1,75 @@
+{
+  "best_by_hit_at_10": {
+    "hit_at_10": 0.4392,
+    "hit_at_20": 0.5766,
+    "ndcg_at_10": 0.2597642522032531,
+    "ndcg_at_20": 0.29447306907488124,
+    "popularity_weight": 0.8
+  },
+  "grid": [
+    {
+      "hit_at_10": 0.104,
+      "hit_at_20": 0.1956,
+      "ndcg_at_10": 0.05160701018919141,
+      "ndcg_at_20": 0.07447426515282221,
+      "popularity_weight": 0.0
+    },
+    {
+      "hit_at_10": 0.1828,
+      "hit_at_20": 0.296,
+      "ndcg_at_10": 0.09473210888333679,
+      "ndcg_at_20": 0.1230397644518047,
+      "popularity_weight": 0.01
+    },
+    {
+      "hit_at_10": 0.325,
+      "hit_at_20": 0.4588,
+      "ndcg_at_10": 0.18650129667361365,
+      "ndcg_at_20": 0.22022899502675158,
+      "popularity_weight": 0.03
+    },
+    {
+      "hit_at_10": 0.388,
+      "hit_at_20": 0.5208,
+      "ndcg_at_10": 0.22692851430172245,
+      "ndcg_at_20": 0.2604530418507466,
+      "popularity_weight": 0.05
+    },
+    {
+      "hit_at_10": 0.4202,
+      "hit_at_20": 0.5606,
+      "ndcg_at_10": 0.24941512958695966,
+      "ndcg_at_20": 0.28475753869686943,
+      "popularity_weight": 0.1
+    },
+    {
+      "hit_at_10": 0.432,
+      "hit_at_20": 0.5746,
+      "ndcg_at_10": 0.2572736084803237,
+      "ndcg_at_20": 0.29317850150020414,
+      "popularity_weight": 0.2
+    },
+    {
+      "hit_at_10": 0.4366,
+      "hit_at_20": 0.5754,
+      "ndcg_at_10": 0.25902868987382527,
+      "ndcg_at_20": 0.2940639780621713,
+      "popularity_weight": 0.4
+    },
+    {
+      "hit_at_10": 0.4392,
+      "hit_at_20": 0.5766,
+      "ndcg_at_10": 0.2597642522032531,
+      "ndcg_at_20": 0.29447306907488124,
+      "popularity_weight": 0.8
+    },
+    {
+      "hit_at_10": 0.438,
+      "hit_at_20": 0.5758,
+      "ndcg_at_10": 0.25922981909609255,
+      "ndcg_at_20": 0.2941342561829524,
+      "popularity_weight": 1.2
+    }
+  ],
+  "protocol": "5000 validation users, 100 sampled negatives, two_tower score + weight*log1p(popularity)"
+}

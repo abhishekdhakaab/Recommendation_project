@@ -1,0 +1,25 @@
+{
+  "title": "SeqRec API",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Recommendation Requests",
+      "targets": [
+        {
+          "expr": "seqrec_recommend_requests_total"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Stage Latency Sums",
+      "targets": [
+        {
+          "expr": "seqrec_stage_latency_ms_sum"
+        }
+      ]
+    }
+  ]
+}

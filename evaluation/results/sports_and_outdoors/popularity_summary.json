@@ -1,0 +1,57 @@
+{
+  "cold_warm_at_20": {
+    "cold_start": {
+      "hit": 0.0,
+      "mrr": 0.0,
+      "ndcg": 0.0,
+      "recall": 0.0,
+      "users": 0
+    },
+    "warm_start": {
+      "hit": 0.010595535796980643,
+      "mrr": 0.0025473694947306036,
+      "ndcg": 0.004281066042065078,
+      "recall": 0.010595535796980643,
+      "users": 53985
+    }
+  },
+  "dataset_stats": {
+    "dropped_short_sequence_users": 0,
+    "filtered_interactions": 2646845,
+    "first_pass_eligible_items": 255483,
+    "first_pass_eligible_users": 632081,
+    "first_pass_raw_interactions": 19595170,
+    "items": 74538,
+    "processed_items": 74538,
+    "raw_interactions": 4537809,
+    "raw_items": 248035,
+    "test_interactions": 319204,
+    "train_interactions": 2008437,
+    "users": 319204,
+    "validation_interactions": 319204
+  },
+  "note": "Popularity baseline over Sports & Outdoors validation split; neural training remains the next compute-heavy step.",
+  "popularity_baseline": {
+    "at_10": {
+      "hit": 0.008211049986842271,
+      "mrr": 0.002926527007757194,
+      "ndcg": 0.004148124041985015,
+      "recall": 0.008211049986842271,
+      "users": 319204
+    },
+    "at_20": {
+      "hit": 0.013843811481059135,
+      "mrr": 0.0033084616264064215,
+      "ndcg": 0.005561031644829385,
+      "recall": 0.013843811481059135,
+      "users": 319204
+    },
+    "at_50": {
+      "hit": 0.026619340609766794,
+      "mrr": 0.0037044196633473957,
+      "ndcg": 0.008077075382685315,
+      "recall": 0.026619340609766794,
+      "users": 319204
+    }
+  }
+}

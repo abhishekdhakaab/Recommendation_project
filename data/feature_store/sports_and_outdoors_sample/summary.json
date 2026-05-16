@@ -1,0 +1,5 @@
+{
+  "items": 1000,
+  "output_dir": "data/feature_store/sports_and_outdoors_sample",
+  "users": 1000
+}

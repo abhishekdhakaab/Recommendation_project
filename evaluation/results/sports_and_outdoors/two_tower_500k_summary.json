@@ -1,0 +1,13 @@
+{
+  "batch_size": 2048,
+  "device": "cpu",
+  "epochs": 3,
+  "first_loss": 7.626732255974594,
+  "index_built": false,
+  "last_loss": 7.5600159236363,
+  "output_dir": "models/artifacts/sports_and_outdoors_tower_500k",
+  "recall_k": 50,
+  "train_interactions": 500000,
+  "validation_recall_at_k": 0.0029,
+  "validation_users": 10000
+}
